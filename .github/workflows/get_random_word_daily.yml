@@ -1,0 +1,30 @@
+name: Get random spanish and english word daily
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # At 01:00 AM, between day 1 and 31 of the month, Monday through Sunday, January through December
+  workflow_dispatch:           # allow manual trigger
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository  # select the repository to use
+        uses: actions/checkout@v4
+
+      - name: Set up Python # set up the python environment to use
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies # install all the modules required to run this script
+        run: pip install -r requirements.txt
+
+      - name: Run daily task # run the actual script
+        env:
+          TELEGRAM_API_KEY: ${{ secrets.TELEGRAM_API_KEY }}
+          BOT_OWNER_ID: ${{ secrets.BOT_OWNER_ID }}
+          MERRIAM_WEBSTER_DICT_API: ${{ secrets.MERRIAM_WEBSTER_DICT_API}}
+          MERRIAM_WEBSTER_SPANISH_DICT_API: ${{ secrets.MERRIAM_WEBSTER_SPANISH_DICT_API}}
+        run: python get_random_word_daily.py
